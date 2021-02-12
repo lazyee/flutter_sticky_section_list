@@ -2,19 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class StickySectionList extends StatelessWidget {
-  final List<Widget> sliverChildren;
   final StickySectionListDelegate delegate;
-  StickySectionList({this.sliverChildren, this.delegate, Key key})
-      : super(key: key);
+  StickySectionList({this.delegate, Key key}) : super(key: key);
 
-  final StickyListController _controller = StickyListController();
+  final StickySectionController _controller = StickySectionController();
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
-    if (sliverChildren != null) {
-      children.addAll(sliverChildren);
-    }
-
     if (delegate != null) {
       for (int i = 0; i < delegate.getSectionCount(); i++) {
         children.add(StickySection(
@@ -49,13 +43,13 @@ class StickySectionListDelegate {
       @required this.getSectionCount});
 }
 
-class StickyListController {
+class StickySectionController {
   List<_StickySectionRenderBox> stickySectionList = [];
 }
 
 class StickySection extends SingleChildRenderObjectWidget {
   final Widget child;
-  final StickyListController controller;
+  final StickySectionController controller;
   const StickySection({
     @required this.controller,
     @required this.child,
@@ -69,7 +63,7 @@ class StickySection extends SingleChildRenderObjectWidget {
 }
 
 class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
-  final StickyListController controller;
+  final StickySectionController controller;
   _StickySectionRenderBox({@required this.controller, child})
       : super(child: child) {
     controller.stickySectionList.add(this);
@@ -157,6 +151,7 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
         nextStickySection.geometry.paintExtent > nextStickySection.offsetY) {
       var scrollOffset =
           nextStickySection.geometry.paintExtent - nextStickySection.offsetY;
+      scrollOffset = scrollOffset.floorToDouble();
 
       pinnedStickySection.setChildParentData(
           pinnedStickySection.child,
