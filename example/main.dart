@@ -1,6 +1,33 @@
-# flutter_sticky_section_list
+import 'package:flutter/material.dart';
+import 'package:flutter_sticky_section_list/sticky_section_list.dart';
 
-```dart
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'StickySectionList',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(title: 'StickySectionList'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
@@ -27,7 +54,3 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 }
-```
-
-
-![](https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/%E6%88%AA%E5%B1%8F2021-02-18%20%E4%B8%8A%E5%8D%889.46.11.png)
