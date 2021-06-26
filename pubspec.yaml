@@ -1,11 +1,11 @@
 name: flutter_sticky_section_list
 description: a sticky section list.
-version: 0.0.1
+version: 1.0.0
 homepage: https://github.com/lazyee/flutter_sticky_section_list
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:

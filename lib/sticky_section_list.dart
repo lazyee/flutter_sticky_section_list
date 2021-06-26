@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class StickySectionList extends StatelessWidget {
-  final StickySectionListDelegate delegate;
-  StickySectionList({this.delegate, Key key}) : super(key: key);
+  final StickySectionListDelegate? delegate;
+  StickySectionList({this.delegate, Key? key}) : super(key: key);
 
   final StickySectionController _controller = StickySectionController();
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
     if (delegate != null) {
-      for (int i = 0; i < delegate.getSectionCount(); i++) {
+      for (int i = 0; i < delegate!.getSectionCount(); i++) {
         children.add(StickySection(
           controller: _controller,
-          child: delegate.buildSection(context, i),
+          child: delegate!.buildSection(context, i),
         ));
         children.add(SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
-            return delegate.buildItem(context, i, index);
-          }, childCount: delegate.getItemCount(i)),
+            return delegate!.buildItem(context, i, index);
+          }, childCount: delegate!.getItemCount(i)),
         ));
       }
     }
@@ -37,10 +37,10 @@ class StickySectionListDelegate {
       buildItem;
 
   StickySectionListDelegate(
-      {@required this.buildItem,
-      @required this.buildSection,
-      @required this.getItemCount,
-      @required this.getSectionCount});
+      {required this.buildItem,
+      required this.buildSection,
+      required this.getItemCount,
+      required this.getSectionCount});
 }
 
 class StickySectionController {
@@ -51,8 +51,8 @@ class StickySection extends SingleChildRenderObjectWidget {
   final Widget child;
   final StickySectionController controller;
   const StickySection({
-    @required this.controller,
-    @required this.child,
+    required this.controller,
+    required this.child,
     key,
   }) : super(key: key, child: child);
 
@@ -64,7 +64,8 @@ class StickySection extends SingleChildRenderObjectWidget {
 
 class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
   final StickySectionController controller;
-  _StickySectionRenderBox({@required this.controller, child})
+
+  _StickySectionRenderBox({required this.controller, child})
       : super(child: child) {
     controller.stickySectionList.add(this);
   }
@@ -79,14 +80,14 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
       return;
     }
     final SliverConstraints constraints = this.constraints;
-    child.layout(constraints.asBoxConstraints(), parentUsesSize: true);
+    child?.layout(constraints.asBoxConstraints(), parentUsesSize: true);
     double childExtent;
     switch (constraints.axis) {
       case Axis.horizontal:
-        childExtent = child.size.width;
+        childExtent = child!.size.width;
         break;
       case Axis.vertical:
-        childExtent = child.size.height;
+        childExtent = child!.size.height;
         break;
     }
 
@@ -116,14 +117,14 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
     if (!pinned) {
       if (currentIndex > lastPinnedIndex && offsetY == 0) {
         setChildParentData(
-            child, constraints.copyWith(scrollOffset: 0), geometry);
+            child!, constraints.copyWith(scrollOffset: 0), geometry!);
       } else {
-        setChildParentData(child, constraints, geometry);
+        setChildParentData(child!, constraints, geometry!);
       }
     } else {
       if (currentIndex < lastPinnedIndex) {
         setChildParentData(
-            child, constraints.copyWith(scrollOffset: childExtent), geometry);
+            child!, constraints.copyWith(scrollOffset: childExtent), geometry!);
       }
     }
     pinned = offsetY == 0;
@@ -131,14 +132,18 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
   }
 
   void calculatePinned(_StickySectionRenderBox renderBox) {
-    _StickySectionRenderBox pinnedStickySection;
+    _StickySectionRenderBox? pinnedStickySection;
 
-    pinnedStickySection = controller.stickySectionList
-        .lastWhere((element) => element.pinned, orElse: () => null);
+    try {
+      pinnedStickySection =
+          controller.stickySectionList.lastWhere((element) => element.pinned);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
     if (pinnedStickySection == null) return null;
 
-    _StickySectionRenderBox nextStickySection;
+    _StickySectionRenderBox? nextStickySection;
     var nextIndex =
         controller.stickySectionList.indexOf(pinnedStickySection) + 1;
     if (controller.stickySectionList.length > nextIndex) {
@@ -148,20 +153,20 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
     if (nextStickySection == null) return;
 
     if (nextStickySection.geometry != null &&
-        nextStickySection.geometry.paintExtent > nextStickySection.offsetY) {
+        nextStickySection.geometry!.paintExtent > nextStickySection.offsetY) {
       var scrollOffset =
-          nextStickySection.geometry.paintExtent - nextStickySection.offsetY;
+          nextStickySection.geometry!.paintExtent - nextStickySection.offsetY;
       scrollOffset = scrollOffset.floorToDouble();
 
       pinnedStickySection.setChildParentData(
-          pinnedStickySection.child,
+          pinnedStickySection.child!,
           pinnedStickySection.constraints.copyWith(scrollOffset: scrollOffset),
-          pinnedStickySection.geometry);
+          pinnedStickySection.geometry!);
     } else {
       pinnedStickySection.setChildParentData(
-          pinnedStickySection.child,
+          pinnedStickySection.child!,
           pinnedStickySection.constraints.copyWith(scrollOffset: 0),
-          pinnedStickySection.geometry);
+          pinnedStickySection.geometry!);
     }
   }
 }
