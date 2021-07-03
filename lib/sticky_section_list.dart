@@ -134,11 +134,13 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
   void calculatePinned(_StickySectionRenderBox renderBox) {
     _StickySectionRenderBox? pinnedStickySection;
 
-    try {
-      pinnedStickySection =
-          controller.stickySectionList.lastWhere((element) => element.pinned);
-    } catch (e) {
-      debugPrint(e.toString());
+    //获取最后一个固定的item
+    for (int i = controller.stickySectionList.length - 1; i >= 0; i--) {
+      var item = controller.stickySectionList[i];
+      if (item.pinned) {
+        pinnedStickySection = item;
+        break;
+      }
     }
 
     if (pinnedStickySection == null) return null;
