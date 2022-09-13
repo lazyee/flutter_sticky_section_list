@@ -5,7 +5,9 @@ class StickySectionList extends StatelessWidget {
   final StickySectionListDelegate? delegate;
   final ScrollController? scrollController;
   final ScrollPhysics? scrollPhysics;
-  StickySectionList({this.delegate, this.scrollController, this.scrollPhysics, Key? key}) : super(key: key);
+  final bool? primary;
+  StickySectionList({this.delegate, this.scrollController, this.scrollPhysics, 
+  this.primary, Key? key}) : super(key: key);
 
   final StickySectionController _controller = StickySectionController();
   @override
@@ -28,6 +30,7 @@ class StickySectionList extends StatelessWidget {
     return CustomScrollView(
       controller: scrollController,
       physics: scrollPhysics,
+      primary: primary,
       slivers: children,
     );
   }
