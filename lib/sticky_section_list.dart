@@ -3,7 +3,9 @@ import 'package:flutter/rendering.dart';
 
 class StickySectionList extends StatelessWidget {
   final StickySectionListDelegate? delegate;
-  StickySectionList({this.delegate, Key? key}) : super(key: key);
+  final ScrollController? scrollController;
+  final ScrollPhysics? scrollPhysics;
+  StickySectionList({this.delegate, this.scrollController, this.scrollPhysics, Key? key}) : super(key: key);
 
   final StickySectionController _controller = StickySectionController();
   @override
@@ -24,6 +26,8 @@ class StickySectionList extends StatelessWidget {
     }
 
     return CustomScrollView(
+      controller: scrollController,
+      physics: scrollPhysics,
       slivers: children,
     );
   }
