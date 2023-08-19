@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class StickySectionList extends StatelessWidget {
+class StickySectionList extends StatefulWidget {
   final StickySectionListDelegate? delegate;
-  StickySectionList({this.delegate, Key? key}) : super(key: key);
+  final ScrollController controller;
+  const StickySectionList({this.delegate, required this.controller, Key? key})
+      : super(key: key);
 
+  @override
+  State<StickySectionList> createState() => _StickySectionListState();
+}
+
+class _StickySectionListState extends State<StickySectionList> {
   final StickySectionController _controller = StickySectionController();
+
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
-    if (delegate != null) {
-      for (int i = 0; i < delegate!.getSectionCount(); i++) {
+    if (widget.delegate != null) {
+      for (int i = 0; i < widget.delegate!.getSectionCount(); i++) {
         children.add(StickySection(
           controller: _controller,
-          child: delegate!.buildSection(context, i),
+          child: widget.delegate!.buildSection(context, i),
         ));
         children.add(SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
-            return delegate!.buildItem(context, i, index);
-          }, childCount: delegate!.getItemCount(i)),
+            return widget.delegate!.buildItem(context, i, index);
+          }, childCount: widget.delegate!.getItemCount(i)),
         ));
       }
     }
 
     return CustomScrollView(
+      controller: widget.controller,
       slivers: children,
     );
   }
@@ -34,13 +43,13 @@ class StickySectionListDelegate {
   final int Function(int sectionIndex) getItemCount;
   final Widget Function(BuildContext context, int sectionIndex) buildSection;
   final Widget Function(BuildContext context, int sectionIndex, int itemIndex)
-      buildItem;
+  buildItem;
 
   StickySectionListDelegate(
       {required this.buildItem,
-      required this.buildSection,
-      required this.getItemCount,
-      required this.getSectionCount});
+        required this.buildSection,
+        required this.getItemCount,
+        required this.getSectionCount});
 }
 
 class StickySectionController {
@@ -92,9 +101,9 @@ class _StickySectionRenderBox extends RenderSliverSingleBoxAdapter {
     }
 
     final double paintedChildSize =
-        calculatePaintOffset(constraints, from: 0.0, to: childExtent);
+    calculatePaintOffset(constraints, from: 0.0, to: childExtent);
     final double cacheExtent =
-        calculateCacheOffset(constraints, from: 0.0, to: childExtent);
+    calculateCacheOffset(constraints, from: 0.0, to: childExtent);
 
     geometry = SliverGeometry(
       scrollExtent: childExtent,
